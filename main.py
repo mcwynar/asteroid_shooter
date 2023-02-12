@@ -13,6 +13,31 @@ class Ship(pygame.sprite.Sprite):
         # We need a rect
         self.rect = self.image.get_rect(center=(WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
 
+        # timer
+        self.can_shoot = True
+        self.shoot_time = None
+
+    def laser_timer(self):
+        if not self.can_shoot:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.shoot_time > 500:
+                self.can_shoot = True
+
+    def input_position(self):
+        position = pygame.mouse.get_pos()
+        self.rect.center = position
+
+    def laser_shoot(self):
+        if pygame.mouse.get_pressed() == (1, 0, 0) and self.can_shoot:
+            print('shoot laser')
+            self.can_shoot = False
+            self.shoot_time = pygame.time.get_ticks()
+
+    def update(self):
+        self.laser_timer()
+        self.laser_shoot()
+        self.input_position()
+
 class Laser(pygame.sprite.Sprite):
     def __init__(self, groups, position):
         super().__init__(groups)
@@ -52,6 +77,9 @@ while True:
 
     # background
     display_surface.blit(background_surf, (0,0))
+
+    # update
+    spaceship_group.update()
 
     # graphics
     spaceship_group.draw(display_surface)
