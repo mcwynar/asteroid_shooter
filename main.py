@@ -54,6 +54,9 @@ class Laser(pygame.sprite.Sprite):
         self.image = pygame.image.load('./graphics/laser.png').convert_alpha()
         self.rect = self.image.get_rect(midbottom=position)
         self.mask = pygame.mask.from_surface(self.image)
+        sound = pygame.mixer.Sound('./sounds/laser.ogg')
+        sound.play()
+        self.explosion_sound = pygame.mixer.Sound('./sounds/explosion.wav')
 
         # float based position
         self.position = pygame.math.Vector2(self.rect.topleft)
@@ -62,6 +65,7 @@ class Laser(pygame.sprite.Sprite):
 
     def meteor_collision(self):
         if pygame.sprite.spritecollide(self, meteor_group, True, pygame.sprite.collide_mask):
+            self.explosion_sound.play()
             self.kill()
     def update(self):
         self.position += self.direction * dt * self.speed
@@ -142,6 +146,10 @@ score = Score()
 # timer
 meteor_timer = pygame.event.custom_type()
 pygame.time.set_timer(meteor_timer, 400)
+
+# sound
+bg_music = pygame.mixer.Sound('./sounds/music.wav')
+bg_music.play(loops=-1)
 
 # game loop
 while True:
